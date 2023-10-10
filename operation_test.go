@@ -14,6 +14,16 @@ type mockedOperation struct {
 
 type mockedCtx struct{}
 
+func newMockedCtx() *mockedCtx {
+	return &mockedCtx{}
+}
+
+func (ctx *mockedCtx) Success(result *mockedResult) {
+}
+
+func (ctx *mockedCtx) Fail(err error) {
+}
+
 type mockedResult struct {
 	result string
 }

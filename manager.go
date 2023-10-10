@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
-type Manager[P any, R any, C any] struct {
+type Manager[P any, R any, C SessionCtx[R]] struct {
 	repository IdempotencyRepository[P, R, C]
 }
 
-func New[P any, R any, C any](repository IdempotencyRepository[P, R, C]) *Manager[P, R, C] {
+func New[P any, R any, C SessionCtx[R]](repository IdempotencyRepository[P, R, C]) *Manager[P, R, C] {
 	return &Manager[P, R, C]{repository: repository}
 }
 
@@ -36,11 +36,11 @@ func (manager *Manager[P, R, C]) Call(operation Operation[P, R, C]) (*R, error) 
 
 func (manager *Manager[P, R, C]) callOperation(operation Operation[P, R, C]) (*R, error) {
 	session := manager.repository.NewSession(operation)
-	defer session.Close()
+	defer session.close()
 
-	callWithinSession(session, operation)
+	session.call(operation)
 
-	return session.Result(), session.Err()
+	return session.result, session.err
 }
 
 func (manager *Manager[P, R, C]) isExpiredOperation(operation Operation[P, R, C]) bool {
@@ -51,18 +51,4 @@ func (manager *Manager[P, R, C]) isExpiredOperation(operation Operation[P, R, C]
 	return time.Now().After(
 		operation.ReferenceTime().Add(operation.Expiration()),
 	)
-}
-
-func callWithinSession[P any, R any, C any](session Session[R, C], operation Operation[P, R, C]) {
-	defer recoverSession(session)
-
-	result, err := operation.Call(session.Ctx())
-	session.SetResult(result)
-	session.SetErr(err)
-}
-
-func recoverSession[R any, C any](session Session[R, C]) {
-	if recovery := recover(); recovery != nil {
-		session.SetErr(newPanicError(recovery))
-	}
 }

@@ -7,12 +7,12 @@ func newEmptyRepository() *emptyRepository {
 	return &emptyRepository{}
 }
 
-func (repo *emptyRepository) FetchOrStart(Operation[string, mockedResult, mockedCtx]) *TrackedOperation[string, mockedResult] {
+func (repo *emptyRepository) FetchOrStart(Operation[string, mockedResult, *mockedCtx]) *TrackedOperation[string, mockedResult] {
 	return nil
 }
 
-func (repo *emptyRepository) NewSession(operation Operation[string, mockedResult, mockedCtx]) Session[mockedResult, mockedCtx] {
-	return newMockedSession(operation)
+func (repo *emptyRepository) NewSession(operation Operation[string, mockedResult, *mockedCtx]) *Session[string, mockedResult, *mockedCtx] {
+	return NewSession(operation, newMockedCtx())
 }
 
 type trackedOperationRepository struct {
@@ -25,10 +25,10 @@ func newTrackedOperationRepository(trackedOperation *TrackedOperation[string, mo
 	}
 }
 
-func (repo *trackedOperationRepository) FetchOrStart(operation Operation[string, mockedResult, mockedCtx]) *TrackedOperation[string, mockedResult] {
+func (repo *trackedOperationRepository) FetchOrStart(operation Operation[string, mockedResult, *mockedCtx]) *TrackedOperation[string, mockedResult] {
 	return repo.trackedOperation
 }
 
-func (repo *trackedOperationRepository) NewSession(operation Operation[string, mockedResult, mockedCtx]) Session[mockedResult, mockedCtx] {
-	return newMockedSession(operation)
+func (repo *trackedOperationRepository) NewSession(operation Operation[string, mockedResult, *mockedCtx]) *Session[string, mockedResult, *mockedCtx] {
+	return NewSession(operation, newMockedCtx())
 }

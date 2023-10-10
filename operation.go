@@ -4,12 +4,12 @@ import (
 	"time"
 )
 
-type Operation[P any, R any, C any] interface {
+type Operation[P any, R any, C SessionCtx[R]] interface {
 	Key() string
 	Target() string
 	Payload() P
 	ReferenceTime() time.Time
 	Timeout() time.Duration
 	Expiration() time.Duration
-	Call(*C) (*R, error)
+	Call(C) (*R, error)
 }
