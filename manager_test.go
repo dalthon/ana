@@ -21,11 +21,11 @@ func TestExpiredOperation(t *testing.T) {
 
 	exptectedErr := newExpirationError("target", "key")
 	if err == nil || err.Error() != exptectedErr.Error() {
-		t.Fatalf("Exptected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
 	}
 
 	if result != nil {
-		t.Fatalf("Exptected to have no result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
 	}
 }
 
@@ -54,11 +54,11 @@ func TestAlreadyFinishedOperation(t *testing.T) {
 	result, err := manager.Call(operation)
 
 	if err != nil {
-		t.Fatalf("Exptected to have no error, but got \"%v\"", err)
+		t.Fatalf("Expected to have no error, but got \"%v\"", err)
 	}
 
 	if result == nil || result.result != "tracked result" {
-		t.Fatalf("Exptected to have \"tracked result\" as result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have \"tracked result\" as result, but got \"%s\"", result.result)
 	}
 }
 
@@ -87,11 +87,11 @@ func TestAlreadyExpiredAndFinishedOperation(t *testing.T) {
 	result, err := manager.Call(operation)
 
 	if err != nil {
-		t.Fatalf("Exptected to have no error, but got \"%v\"", err)
+		t.Fatalf("Expected to have no error, but got \"%v\"", err)
 	}
 
 	if result == nil || result.result != "tracked result" {
-		t.Fatalf("Exptected to have \"tracked result\" as result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have \"tracked result\" as result, but got \"%s\"", result.result)
 	}
 }
 
@@ -121,11 +121,11 @@ func TestAlreadyExpiredAndReadyOperation(t *testing.T) {
 
 	exptectedErr := newExpirationError("target", "key")
 	if err == nil || err.Error() != exptectedErr.Error() {
-		t.Fatalf("Exptected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
 	}
 
 	if result != nil {
-		t.Fatalf("Exptected to have no result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
 	}
 }
 
@@ -155,11 +155,11 @@ func TestAlreadyExpiredAndRunningOperation(t *testing.T) {
 
 	exptectedErr := newExpirationError("target", "key")
 	if err == nil || err.Error() != exptectedErr.Error() {
-		t.Fatalf("Exptected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
 	}
 
 	if result != nil {
-		t.Fatalf("Exptected to have no result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
 	}
 }
 
@@ -189,11 +189,11 @@ func TestAlreadyExpiredAndFailedOperation(t *testing.T) {
 
 	exptectedErr := newExpirationError("target", "key")
 	if err == nil || err.Error() != exptectedErr.Error() {
-		t.Fatalf("Exptected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
 	}
 
 	if result != nil {
-		t.Fatalf("Exptected to have no result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
 	}
 }
 
@@ -223,11 +223,11 @@ func TestAlreadyStillRunningOperation(t *testing.T) {
 
 	exptectedErr := newStillRunningError("target", "key")
 	if err == nil || err.Error() != exptectedErr.Error() {
-		t.Fatalf("Exptected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
 	}
 
 	if result != nil {
-		t.Fatalf("Exptected to have no result, but got \"%s\"", result.result)
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
 	}
 }
 
