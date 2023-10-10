@@ -27,3 +27,15 @@ func newStillRunningError(target string, key string) *StillRunningError {
 func (err *StillRunningError) Error() string {
 	return fmt.Sprintf("Operation %v still running for key %v.", err.target, err.key)
 }
+
+type PanicError struct {
+	err interface{}
+}
+
+func newPanicError(err interface{}) *PanicError {
+	return &PanicError{err: err}
+}
+
+func (err *PanicError) Error() string {
+	return fmt.Sprintf("Got panic \"%v\"", err.err)
+}

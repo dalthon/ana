@@ -31,7 +31,16 @@ func (manager *Manager[P, R, C]) Call(operation Operation[P, R, C]) (*R, error) 
 		return nil, newStillRunningError(trackedOperation.Target, trackedOperation.Key)
 	}
 
-	return manager.repository.Call(operation)
+	return manager.callOperation(operation)
+}
+
+func (manager *Manager[P, R, C]) callOperation(operation Operation[P, R, C]) (*R, error) {
+	session := manager.repository.NewSession(operation)
+	defer session.Close()
+
+	callWithinSession(session, operation)
+
+	return session.Result(), session.Err()
 }
 
 func (manager *Manager[P, R, C]) isExpiredOperation(operation Operation[P, R, C]) bool {
@@ -42,4 +51,18 @@ func (manager *Manager[P, R, C]) isExpiredOperation(operation Operation[P, R, C]
 	return time.Now().After(
 		operation.ReferenceTime().Add(operation.Expiration()),
 	)
+}
+
+func callWithinSession[P any, R any, C any](session Session[R, C], operation Operation[P, R, C]) {
+	defer recoverSession(session)
+
+	result, err := operation.Call(session.Ctx())
+	session.SetResult(result)
+	session.SetErr(err)
+}
+
+func recoverSession[R any, C any](session Session[R, C]) {
+	if recovery := recover(); recovery != nil {
+		session.SetErr(newPanicError(recovery))
+	}
 }

@@ -11,8 +11,8 @@ func (repo *emptyRepository) FetchOrStart(Operation[string, mockedResult, mocked
 	return nil
 }
 
-func (repo *emptyRepository) Call(Operation[string, mockedResult, mockedCtx]) (*mockedResult, error) {
-	return nil, nil
+func (repo *emptyRepository) NewSession(operation Operation[string, mockedResult, mockedCtx]) Session[mockedResult, mockedCtx] {
+	return newMockedSession(operation)
 }
 
 type trackedOperationRepository struct {
@@ -29,6 +29,6 @@ func (repo *trackedOperationRepository) FetchOrStart(operation Operation[string,
 	return repo.trackedOperation
 }
 
-func (repo *trackedOperationRepository) Call(operation Operation[string, mockedResult, mockedCtx]) (*mockedResult, error) {
-	return operation.Call(nil)
+func (repo *trackedOperationRepository) NewSession(operation Operation[string, mockedResult, mockedCtx]) Session[mockedResult, mockedCtx] {
+	return newMockedSession(operation)
 }
