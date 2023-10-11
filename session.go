@@ -7,6 +7,7 @@ type SessionCtx[P any, R any] interface {
 	Fail(*TrackedOperation[P, R])
 }
 
+// TODO: Add some tests at session_test.go
 type Session[P any, R any, C SessionCtx[P, R]] struct {
 	operation Operation[P, R, C]
 	context   C
