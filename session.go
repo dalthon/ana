@@ -41,11 +41,11 @@ func (session *Session[P, R, C]) trackedOperation() *TrackedOperation[P, R] {
 	expiration := time.Time{}
 
 	if session.operation.Timeout() != time.Duration(0) {
-		timeout = session.startedAt.Add(session.operation.Timeout())
+		timeout = session.operation.ReferenceTime().Add(session.operation.Timeout())
 	}
 
 	if session.operation.Expiration() != time.Duration(0) {
-		expiration = session.startedAt.Add(session.operation.Expiration())
+		expiration = session.operation.ReferenceTime().Add(session.operation.Expiration())
 	}
 
 	status := Finished
