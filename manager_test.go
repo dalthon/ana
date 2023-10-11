@@ -543,3 +543,70 @@ func TestNotExpiredAndFailedOperation(t *testing.T) {
 		t.Fatalf("Expected to have \"result\" as result, but got \"%s\"", result.result)
 	}
 }
+
+func TestSucessOperation(t *testing.T) {
+	manager := New(newEmptyRepository())
+	operation := newMockedOperation(
+		"key",
+		"target",
+		"payload",
+		time.Now(),
+		5*time.Second,
+		10*time.Second,
+		newMockedResultFn("Ok!"),
+	)
+	result, err := manager.Call(operation)
+
+	if err != nil {
+		t.Fatalf("Expected to have no error, but got \"%v\"", err)
+	}
+
+	if result == nil || result.result != "Ok!" {
+		t.Fatalf("Expected to have \"Ok!\" as result, but got \"%s\"", result.result)
+	}
+}
+
+func TestFailingOperation(t *testing.T) {
+	manager := New(newEmptyRepository())
+	operation := newMockedOperation(
+		"key",
+		"target",
+		"payload",
+		time.Now(),
+		5*time.Second,
+		10*time.Second,
+		newMockedErrorFn("Boom!"),
+	)
+	result, err := manager.Call(operation)
+
+	if err == nil || err.Error() != "Boom!" {
+		t.Fatalf("Expected to have \"Boom!\" error, but got \"%v\"", err)
+	}
+
+	if result != nil {
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
+	}
+}
+
+func TestPanicOperation(t *testing.T) {
+	manager := New(newEmptyRepository())
+	operation := newMockedOperation(
+		"key",
+		"target",
+		"payload",
+		time.Now(),
+		5*time.Second,
+		10*time.Second,
+		newMockedPanicFn("Boom!"),
+	)
+	result, err := manager.Call(operation)
+
+	exptectedErr := newPanicError("Boom!")
+	if err == nil || err.Error() != exptectedErr.Error() {
+		t.Fatalf("Expected to have \"%v\" error, but got \"%v\"", exptectedErr, err)
+	}
+
+	if result != nil {
+		t.Fatalf("Expected to have no result, but got \"%s\"", result.result)
+	}
+}

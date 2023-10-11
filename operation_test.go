@@ -1,6 +1,9 @@
 package idempotency_manager
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type mockedOperation struct {
 	key           string
@@ -71,6 +74,18 @@ func newMockedResult(result string) *mockedResult {
 func newMockedResultFn(result string) func() (*mockedResult, error) {
 	return func() (*mockedResult, error) {
 		return newMockedResult(result), nil
+	}
+}
+
+func newMockedErrorFn(message string) func() (*mockedResult, error) {
+	return func() (*mockedResult, error) {
+		return nil, errors.New(message)
+	}
+}
+
+func newMockedPanicFn(message string) func() (*mockedResult, error) {
+	return func() (*mockedResult, error) {
+		panic(message)
 	}
 }
 

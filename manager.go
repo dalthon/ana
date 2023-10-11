@@ -19,16 +19,18 @@ func (manager *Manager[P, R, C]) Call(operation Operation[P, R, C]) (*R, error) 
 
 	trackedOperation := manager.repository.FetchOrStart(operation)
 
-	if trackedOperation.isFinished() {
-		return trackedOperation.Result, nil
-	}
+	if trackedOperation != nil {
+		if trackedOperation.isFinished() {
+			return trackedOperation.Result, nil
+		}
 
-	if trackedOperation.isExpired() {
-		return nil, newExpirationError(trackedOperation.Target, trackedOperation.Key)
-	}
+		if trackedOperation.isExpired() {
+			return nil, newExpirationError(trackedOperation.Target, trackedOperation.Key)
+		}
 
-	if trackedOperation.stillRunning() {
-		return nil, newStillRunningError(trackedOperation.Target, trackedOperation.Key)
+		if trackedOperation.stillRunning() {
+			return nil, newStillRunningError(trackedOperation.Target, trackedOperation.Key)
+		}
 	}
 
 	return manager.callOperation(operation)
