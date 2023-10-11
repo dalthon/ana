@@ -15,7 +15,7 @@ func TestExpiredOperation(t *testing.T) {
 		time.Now().Add(-20*time.Second),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -50,7 +50,7 @@ func TestAlreadyFinishedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -84,7 +84,7 @@ func TestAlreadyExpiredAndFinishedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -118,7 +118,7 @@ func TestAlreadyExpiredAndReadyOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -153,7 +153,7 @@ func TestAlreadyExpiredAndRunningOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -188,7 +188,7 @@ func TestAlreadyExpiredAndFailedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -223,7 +223,7 @@ func TestAlreadyStillRunningOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -258,7 +258,7 @@ func TestNeverTimeoutRunningOperation(t *testing.T) {
 		time.Now(),
 		time.Duration(0),
 		5*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -293,7 +293,7 @@ func TestNeverExpiredAndFinishedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		time.Duration(0),
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -327,7 +327,7 @@ func TestNeverExpiredAndReadyOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		time.Duration(0),
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -361,7 +361,7 @@ func TestNeverExpiredAndRunningOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		time.Duration(0),
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -395,7 +395,7 @@ func TestNeverExpiredAndFailedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		time.Duration(0),
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -429,7 +429,7 @@ func TestNotExpiredAndFinishedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -463,7 +463,7 @@ func TestNotExpiredAndReadyOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -497,7 +497,7 @@ func TestNotExpiredAndRunningOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 
@@ -531,7 +531,7 @@ func TestNotExpiredAndFailedOperation(t *testing.T) {
 		time.Now(),
 		5*time.Second,
 		10*time.Second,
-		newMockedResult("result"),
+		newMockedResultFn("result"),
 	)
 	result, err := manager.Call(operation)
 

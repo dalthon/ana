@@ -9,7 +9,7 @@ type mockedOperation struct {
 	referenceTime time.Time
 	timeout       time.Duration
 	expiration    time.Duration
-	result        *mockedResult
+	result        func() (*mockedResult, error)
 }
 
 func newMockedOperation(
@@ -19,7 +19,7 @@ func newMockedOperation(
 	referenceTime time.Time,
 	timeout time.Duration,
 	expiration time.Duration,
-	result *mockedResult,
+	result func() (*mockedResult, error),
 ) *mockedOperation {
 	return &mockedOperation{
 		key:           key,
@@ -57,7 +57,7 @@ func (operation *mockedOperation) Expiration() time.Duration {
 }
 
 func (operation *mockedOperation) Call(ctx *mockedCtx) (*mockedResult, error) {
-	return operation.result, nil
+	return operation.result()
 }
 
 type mockedResult struct {
@@ -66,6 +66,12 @@ type mockedResult struct {
 
 func newMockedResult(result string) *mockedResult {
 	return &mockedResult{result: result}
+}
+
+func newMockedResultFn(result string) func() (*mockedResult, error) {
+	return func() (*mockedResult, error) {
+		return newMockedResult(result), nil
+	}
 }
 
 type mockedCtx struct{}
