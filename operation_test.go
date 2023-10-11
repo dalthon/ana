@@ -12,26 +12,6 @@ type mockedOperation struct {
 	result        *mockedResult
 }
 
-type mockedCtx struct{}
-
-func newMockedCtx() *mockedCtx {
-	return &mockedCtx{}
-}
-
-func (ctx *mockedCtx) Success(result *mockedResult) {
-}
-
-func (ctx *mockedCtx) Fail(err error) {
-}
-
-type mockedResult struct {
-	result string
-}
-
-func newMockedResult(result string) *mockedResult {
-	return &mockedResult{result: result}
-}
-
 func newMockedOperation(
 	key string,
 	target string,
@@ -78,4 +58,24 @@ func (operation *mockedOperation) Expiration() time.Duration {
 
 func (operation *mockedOperation) Call(ctx *mockedCtx) (*mockedResult, error) {
 	return operation.result, nil
+}
+
+type mockedResult struct {
+	result string
+}
+
+func newMockedResult(result string) *mockedResult {
+	return &mockedResult{result: result}
+}
+
+type mockedCtx struct{}
+
+func newMockedCtx() *mockedCtx {
+	return &mockedCtx{}
+}
+
+func (ctx *mockedCtx) Success(*TrackedOperation[string, mockedResult]) {
+}
+
+func (ctx *mockedCtx) Fail(*TrackedOperation[string, mockedResult]) {
 }

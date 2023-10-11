@@ -40,6 +40,7 @@ func TestAlreadyFinishedOperation(t *testing.T) {
 		time.Now().Add(5*time.Second),
 		time.Now().Add(10*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -73,6 +74,7 @@ func TestAlreadyExpiredAndFinishedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(-5*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -106,6 +108,7 @@ func TestAlreadyExpiredAndReadyOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(-5*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -140,6 +143,7 @@ func TestAlreadyExpiredAndRunningOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(-5*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -174,6 +178,7 @@ func TestAlreadyExpiredAndFailedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(-5*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -208,6 +213,7 @@ func TestAlreadyStillRunningOperation(t *testing.T) {
 		time.Now().Add(5*time.Second),
 		time.Now().Add(7*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -242,6 +248,7 @@ func TestNeverTimeoutRunningOperation(t *testing.T) {
 		time.Time{},
 		time.Now().Add(5*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -276,6 +283,7 @@ func TestNeverExpiredAndFinishedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Time{},
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -309,6 +317,7 @@ func TestNeverExpiredAndReadyOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Time{},
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -342,6 +351,7 @@ func TestNeverExpiredAndRunningOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Time{},
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -375,6 +385,7 @@ func TestNeverExpiredAndFailedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Time{},
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -408,6 +419,7 @@ func TestNotExpiredAndFinishedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(10*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -441,6 +453,7 @@ func TestNotExpiredAndReadyOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(10*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -474,6 +487,7 @@ func TestNotExpiredAndRunningOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(10*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(
@@ -507,6 +521,7 @@ func TestNotExpiredAndFailedOperation(t *testing.T) {
 		time.Now().Add(-10*time.Second),
 		time.Now().Add(10*time.Second),
 		newMockedResult("tracked result"),
+		nil,
 	)
 	manager := New(newTrackedOperationRepository(trackedOperation))
 	operation := newMockedOperation(

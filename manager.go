@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
-type Manager[P any, R any, C SessionCtx[R]] struct {
+type Manager[P any, R any, C SessionCtx[P, R]] struct {
 	repository IdempotencyRepository[P, R, C]
 }
 
-func New[P any, R any, C SessionCtx[R]](repository IdempotencyRepository[P, R, C]) *Manager[P, R, C] {
+func New[P any, R any, C SessionCtx[P, R]](repository IdempotencyRepository[P, R, C]) *Manager[P, R, C] {
 	return &Manager[P, R, C]{repository: repository}
 }
 

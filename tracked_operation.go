@@ -23,6 +23,7 @@ type TrackedOperation[P any, R any] struct {
 	Timeout       time.Time
 	Expiration    time.Time
 	Result        *R
+	Err           error
 }
 
 func NewTrackedOperation[P any, R any](
@@ -35,6 +36,7 @@ func NewTrackedOperation[P any, R any](
 	timeout time.Time,
 	expiration time.Time,
 	result *R,
+	err error,
 ) *TrackedOperation[P, R] {
 	return &TrackedOperation[P, R]{
 		Status:        status,
@@ -46,6 +48,7 @@ func NewTrackedOperation[P any, R any](
 		Timeout:       timeout,
 		Expiration:    expiration,
 		Result:        result,
+		Err:           err,
 	}
 }
 
