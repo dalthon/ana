@@ -38,7 +38,7 @@ func (manager *Manager[P, R, C]) callOperation(operation Operation[P, R, C]) (*R
 	session := manager.repository.NewSession(operation)
 	defer session.close()
 
-	session.call(operation)
+	session.call()
 
 	return session.result, session.err
 }

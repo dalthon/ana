@@ -25,10 +25,10 @@ func NewSession[P any, R any, C SessionCtx[P, R]](operation Operation[P, R, C], 
 	}
 }
 
-func (session *Session[P, R, C]) call(operation Operation[P, R, C]) {
+func (session *Session[P, R, C]) call() {
 	defer session.recover()
 	session.startedAt = time.Now()
-	session.result, session.err = operation.Call(session.context)
+	session.result, session.err = session.operation.Call(session.context)
 }
 
 func (session *Session[P, R, C]) recover() {

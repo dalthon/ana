@@ -97,14 +97,19 @@ func newMockedPanicFn(message string) func() (*mockedResult, error) {
 	}
 }
 
-type mockedCtx struct{}
+type mockedCtx struct {
+	SuccessCount uint
+	FailCount    uint
+}
 
 func newMockedCtx() *mockedCtx {
-	return &mockedCtx{}
+	return &mockedCtx{0, 0}
 }
 
 func (ctx *mockedCtx) Success(*TrackedOperation[mockedPayload, mockedResult]) {
+	ctx.SuccessCount += 1
 }
 
 func (ctx *mockedCtx) Fail(*TrackedOperation[mockedPayload, mockedResult]) {
+	ctx.FailCount += 1
 }
