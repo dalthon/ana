@@ -9,16 +9,6 @@ import (
 	pgx "github.com/jackc/pgx/v5"
 )
 
-type PgxPayload struct {
-	Str   string
-	Value int
-}
-
-type PgxResult struct {
-	Str   string
-	Value int
-}
-
 func serialize[S any](value *S) []byte {
 	if value == nil {
 		return []byte{}
@@ -49,8 +39,8 @@ func deserialize[S any](encoded []byte) *S {
 	return &decoded
 }
 
-func rowsToTrackedOperation(rows pgx.Rows) *im.TrackedOperation[PgxPayload, PgxResult] {
-	var operation im.TrackedOperation[PgxPayload, PgxResult]
+func rowsToTrackedOperation[P any, R any](rows pgx.Rows) *im.TrackedOperation[P, R] {
+	var operation im.TrackedOperation[P, R]
 	var status string
 	var errorMessage string
 	var encodedPayload []byte
@@ -86,8 +76,8 @@ func rowsToTrackedOperation(rows pgx.Rows) *im.TrackedOperation[PgxPayload, PgxR
 		operation.Err = errors.New(errorMessage)
 	}
 
-	operation.Payload = deserialize[PgxPayload](encodedPayload)
-	operation.Result = deserialize[PgxResult](encodedResult)
+	operation.Payload = deserialize[P](encodedPayload)
+	operation.Result = deserialize[R](encodedResult)
 
 	return &operation
 }

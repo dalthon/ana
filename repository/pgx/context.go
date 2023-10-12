@@ -34,17 +34,17 @@ var failTrackedOperationQuery string = `
     key = @key AND target = @target;
 `
 
-type PgxContext struct {
+type PgxContext[P any, R any] struct {
 	outerTx pgx.Tx
 	Tx      pgx.Tx
 	Context context.Context
 }
 
-func NewPgxContext(outerTx pgx.Tx, tx pgx.Tx, context context.Context) *PgxContext {
-	return &PgxContext{outerTx: outerTx, Tx: tx, Context: context}
+func NewPgxContext[P any, R any](outerTx pgx.Tx, tx pgx.Tx, context context.Context) *PgxContext[P, R] {
+	return &PgxContext[P, R]{outerTx: outerTx, Tx: tx, Context: context}
 }
 
-func (ctx *PgxContext) Success(operation *im.TrackedOperation[PgxPayload, PgxResult]) {
+func (ctx *PgxContext[P, R]) Success(operation *im.TrackedOperation[P, R]) {
 	if !operation.Expiration.IsZero() && time.Now().After(operation.Expiration) {
 		ctx.Fail(operation)
 		return
@@ -75,7 +75,7 @@ func (ctx *PgxContext) Success(operation *im.TrackedOperation[PgxPayload, PgxRes
 	}
 }
 
-func (ctx *PgxContext) Fail(operation *im.TrackedOperation[PgxPayload, PgxResult]) {
+func (ctx *PgxContext[P, R]) Fail(operation *im.TrackedOperation[P, R]) {
 	if commitErr := ctx.Tx.Rollback(ctx.Context); commitErr != nil {
 		panic(commitErr)
 	}

@@ -15,7 +15,7 @@ import (
 
 func main() {
 	pool := newPool()
-	repo := r.NewPgxRepository(pool)
+	repo := r.NewPgxRepository[debugPayload, debugResult](pool)
 
 	manager := im.New(repo)
 	operation := newOperation()
@@ -43,10 +43,20 @@ func newPool() *pgxpool.Pool {
 	return pool
 }
 
+type debugPayload struct {
+	Str   string
+	Value int
+}
+
+type debugResult struct {
+	Str   string
+	Value int
+}
+
 type operation struct {
 	key           string
 	target        string
-	payload       *r.PgxPayload
+	payload       *debugPayload
 	referenceTime time.Time
 	timeout       time.Duration
 	expiration    time.Duration
@@ -73,7 +83,7 @@ func newOperation() *operation {
 	return &operation{
 		key:        key,
 		target:     target,
-		payload:    &r.PgxPayload{payloadValue, 1},
+		payload:    &debugPayload{payloadValue, 1},
 		timeout:    1 * time.Minute,
 		expiration: 1 * time.Minute,
 		referenceTime: time.Date(
@@ -90,7 +100,7 @@ func (o *operation) Target() string {
 	return o.target
 }
 
-func (o *operation) Payload() *r.PgxPayload {
+func (o *operation) Payload() *debugPayload {
 	return o.payload
 }
 
@@ -106,12 +116,12 @@ func (o *operation) Expiration() time.Duration {
 	return o.expiration
 }
 
-func (o *operation) Call(ctx *r.PgxContext) (*r.PgxResult, error) {
+func (o *operation) Call(ctx *r.PgxContext[debugPayload, debugResult]) (*debugResult, error) {
 	fmt.Println("Not already processed")
 
 	if len(os.Args) > 4 {
 		return nil, errors.New(os.Args[4])
 	}
 
-	return &r.PgxResult{o.Payload().Str, 42}, nil
+	return &debugResult{o.Payload().Str, 42}, nil
 }

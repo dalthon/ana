@@ -40,15 +40,15 @@ var lockTrackOperationQuery string = `
   FOR UPDATE;
 `
 
-type PgxRepository struct {
+type PgxRepository[P any, R any] struct {
 	pool *pgxpool.Pool
 }
 
-func NewPgxRepository(pool *pgxpool.Pool) *PgxRepository {
-	return &PgxRepository{pool: pool}
+func NewPgxRepository[P any, R any](pool *pgxpool.Pool) *PgxRepository[P, R] {
+	return &PgxRepository[P, R]{pool: pool}
 }
 
-func (repo *PgxRepository) FetchOrStart(operation im.Operation[PgxPayload, PgxResult, *PgxContext]) *im.TrackedOperation[PgxPayload, PgxResult] {
+func (repo *PgxRepository[P, R]) FetchOrStart(operation im.Operation[P, R, *PgxContext[P, R]]) *im.TrackedOperation[P, R] {
 	rows, err := repo.pool.Query(
 		context.Background(),
 		fetchOrStartQuery,
@@ -66,10 +66,10 @@ func (repo *PgxRepository) FetchOrStart(operation im.Operation[PgxPayload, PgxRe
 		panic(err)
 	}
 
-	return rowsToTrackedOperation(rows)
+	return rowsToTrackedOperation[P, R](rows)
 }
 
-func (repo *PgxRepository) NewSession(operation im.Operation[PgxPayload, PgxResult, *PgxContext]) *im.Session[PgxPayload, PgxResult, *PgxContext] {
+func (repo *PgxRepository[P, R]) NewSession(operation im.Operation[P, R, *PgxContext[P, R]]) *im.Session[P, R, *PgxContext[P, R]] {
 	context := context.Background()
 	outerTx, _ := repo.pool.Begin(context)
 	tx, _ := outerTx.Begin(context)
@@ -80,5 +80,5 @@ func (repo *PgxRepository) NewSession(operation im.Operation[PgxPayload, PgxResu
 		"reference_time": operation.ReferenceTime(),
 	})
 
-	return im.NewSession(operation, NewPgxContext(outerTx, tx, context))
+	return im.NewSession(operation, NewPgxContext[P, R](outerTx, tx, context))
 }
