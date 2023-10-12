@@ -48,7 +48,7 @@ func NewPgxRepository(pool *pgxpool.Pool) *PgxRepository {
 	return &PgxRepository{pool: pool}
 }
 
-func (repo *PgxRepository) FetchOrStart(operation im.Operation[*PgxPayload, PgxResult, *PgxContext]) *im.TrackedOperation[*PgxPayload, PgxResult] {
+func (repo *PgxRepository) FetchOrStart(operation im.Operation[PgxPayload, PgxResult, *PgxContext]) *im.TrackedOperation[PgxPayload, PgxResult] {
 	rows, err := repo.pool.Query(
 		context.Background(),
 		fetchOrStartQuery,
@@ -69,7 +69,7 @@ func (repo *PgxRepository) FetchOrStart(operation im.Operation[*PgxPayload, PgxR
 	return rowsToTrackedOperation(rows)
 }
 
-func (repo *PgxRepository) NewSession(operation im.Operation[*PgxPayload, PgxResult, *PgxContext]) *im.Session[*PgxPayload, PgxResult, *PgxContext] {
+func (repo *PgxRepository) NewSession(operation im.Operation[PgxPayload, PgxResult, *PgxContext]) *im.Session[PgxPayload, PgxResult, *PgxContext] {
 	context := context.Background()
 	outerTx, _ := repo.pool.Begin(context)
 	tx, _ := outerTx.Begin(context)

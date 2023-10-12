@@ -22,15 +22,16 @@ func main() {
 	result, err := manager.Call(operation)
 
 	fmt.Println("OPERATION")
-	fmt.Println("Key:", operation.Key())
-	fmt.Println("Target:", operation.Target())
-	fmt.Println("Payload:", operation.Payload())
-	fmt.Println("ReferenceTime:", operation.ReferenceTime())
-	fmt.Println("Timeout:", operation.Timeout())
-	fmt.Println("Expiration:", operation.Expiration())
+	fmt.Println("  Key:          ", operation.Key())
+	fmt.Println("  Target:       ", operation.Target())
+	fmt.Println("  Payload:      ", operation.Payload())
+	fmt.Println("  ReferenceTime:", operation.ReferenceTime())
+	fmt.Println("  Timeout:      ", operation.Timeout())
+	fmt.Println("  Expiration:   ", operation.Expiration())
 
-	fmt.Println("\nResult:", result)
-	fmt.Println("Error:", err)
+	fmt.Println("\nRESULT")
+	fmt.Println("  Result:", result)
+	fmt.Println("  Error: ", err)
 }
 
 func newPool() *pgxpool.Pool {

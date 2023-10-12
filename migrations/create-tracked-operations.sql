@@ -36,9 +36,7 @@ DECLARE
 BEGIN
   SELECT * INTO _operation
   FROM idempotency.tracked_operations
-  WHERE
-    key    = _key AND
-    target = _target
+  WHERE key = _key AND target = _target
   FOR UPDATE;
 
   IF FOUND THEN

@@ -49,8 +49,8 @@ func deserialize[S any](encoded []byte) *S {
 	return &decoded
 }
 
-func rowsToTrackedOperation(rows pgx.Rows) *im.TrackedOperation[*PgxPayload, PgxResult] {
-	var operation im.TrackedOperation[*PgxPayload, PgxResult]
+func rowsToTrackedOperation(rows pgx.Rows) *im.TrackedOperation[PgxPayload, PgxResult] {
+	var operation im.TrackedOperation[PgxPayload, PgxResult]
 	var status string
 	var errorMessage string
 	var encodedPayload []byte

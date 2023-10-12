@@ -2,6 +2,7 @@ package pgx
 
 import (
 	"context"
+	"time"
 
 	im "github.com/dalthon/idempotency_manager"
 	pgx "github.com/jackc/pgx/v5"
@@ -16,8 +17,7 @@ var finishTrackedOperationQuery string = `
     status        = 'finished',
     error_message = NULL
   WHERE
-    key    = @key AND
-    target = @target;
+    key = @key AND target = @target;
 `
 
 var failTrackedOperationQuery string = `
@@ -31,8 +31,7 @@ var failTrackedOperationQuery string = `
     error_message = @error_message,
     error_count   = error_count + 1
   WHERE
-    key    = @key AND
-    target = @target;
+    key = @key AND target = @target;
 `
 
 type PgxContext struct {
@@ -45,7 +44,12 @@ func NewPgxContext(outerTx pgx.Tx, tx pgx.Tx, context context.Context) *PgxConte
 	return &PgxContext{outerTx: outerTx, Tx: tx, Context: context}
 }
 
-func (ctx *PgxContext) Success(operation *im.TrackedOperation[*PgxPayload, PgxResult]) {
+func (ctx *PgxContext) Success(operation *im.TrackedOperation[PgxPayload, PgxResult]) {
+	if !operation.Expiration.IsZero() && time.Now().After(operation.Expiration) {
+		ctx.Fail(operation)
+		return
+	}
+
 	if commitErr := ctx.Tx.Commit(ctx.Context); commitErr != nil {
 		panic(commitErr)
 	}
@@ -71,7 +75,7 @@ func (ctx *PgxContext) Success(operation *im.TrackedOperation[*PgxPayload, PgxRe
 	}
 }
 
-func (ctx *PgxContext) Fail(operation *im.TrackedOperation[*PgxPayload, PgxResult]) {
+func (ctx *PgxContext) Fail(operation *im.TrackedOperation[PgxPayload, PgxResult]) {
 	if commitErr := ctx.Tx.Rollback(ctx.Context); commitErr != nil {
 		panic(commitErr)
 	}
