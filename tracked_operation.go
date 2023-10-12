@@ -17,7 +17,7 @@ type TrackedOperation[P any, R any] struct {
 	Status        TrackedOperationStatus
 	Key           string
 	Target        string
-	Payload       P
+	Payload       *P
 	ReferenceTime time.Time
 	StartedAt     time.Time
 	Timeout       time.Time
@@ -30,7 +30,7 @@ func NewTrackedOperation[P any, R any](
 	status TrackedOperationStatus,
 	key string,
 	target string,
-	payload P,
+	payload *P,
 	referenceTime time.Time,
 	startedAt time.Time,
 	timeout time.Time,

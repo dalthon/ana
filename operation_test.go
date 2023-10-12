@@ -8,7 +8,7 @@ import (
 type mockedOperation struct {
 	key           string
 	target        string
-	payload       string
+	payload       *mockedPayload
 	referenceTime time.Time
 	timeout       time.Duration
 	expiration    time.Duration
@@ -18,7 +18,7 @@ type mockedOperation struct {
 func newMockedOperation(
 	key string,
 	target string,
-	payload string,
+	payload *mockedPayload,
 	referenceTime time.Time,
 	timeout time.Duration,
 	expiration time.Duration,
@@ -43,7 +43,7 @@ func (operation *mockedOperation) Target() string {
 	return operation.target
 }
 
-func (operation *mockedOperation) Payload() string {
+func (operation *mockedOperation) Payload() *mockedPayload {
 	return operation.payload
 }
 
@@ -63,12 +63,20 @@ func (operation *mockedOperation) Call(ctx *mockedCtx) (*mockedResult, error) {
 	return operation.result()
 }
 
+type mockedPayload struct {
+	payload string
+}
+
+func newMockedPayload(payload string) *mockedPayload {
+	return &mockedPayload{payload}
+}
+
 type mockedResult struct {
 	result string
 }
 
 func newMockedResult(result string) *mockedResult {
-	return &mockedResult{result: result}
+	return &mockedResult{result}
 }
 
 func newMockedResultFn(result string) func() (*mockedResult, error) {
@@ -95,8 +103,8 @@ func newMockedCtx() *mockedCtx {
 	return &mockedCtx{}
 }
 
-func (ctx *mockedCtx) Success(*TrackedOperation[string, mockedResult]) {
+func (ctx *mockedCtx) Success(*TrackedOperation[mockedPayload, mockedResult]) {
 }
 
-func (ctx *mockedCtx) Fail(*TrackedOperation[string, mockedResult]) {
+func (ctx *mockedCtx) Fail(*TrackedOperation[mockedPayload, mockedResult]) {
 }

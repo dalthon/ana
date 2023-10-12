@@ -7,28 +7,28 @@ func newEmptyRepository() *emptyRepository {
 	return &emptyRepository{}
 }
 
-func (repo *emptyRepository) FetchOrStart(Operation[string, mockedResult, *mockedCtx]) *TrackedOperation[string, mockedResult] {
+func (repo *emptyRepository) FetchOrStart(Operation[mockedPayload, mockedResult, *mockedCtx]) *TrackedOperation[mockedPayload, mockedResult] {
 	return nil
 }
 
-func (repo *emptyRepository) NewSession(operation Operation[string, mockedResult, *mockedCtx]) *Session[string, mockedResult, *mockedCtx] {
+func (repo *emptyRepository) NewSession(operation Operation[mockedPayload, mockedResult, *mockedCtx]) *Session[mockedPayload, mockedResult, *mockedCtx] {
 	return NewSession(operation, newMockedCtx())
 }
 
 type trackedOperationRepository struct {
-	trackedOperation *TrackedOperation[string, mockedResult]
+	trackedOperation *TrackedOperation[mockedPayload, mockedResult]
 }
 
-func newTrackedOperationRepository(trackedOperation *TrackedOperation[string, mockedResult]) *trackedOperationRepository {
+func newTrackedOperationRepository(trackedOperation *TrackedOperation[mockedPayload, mockedResult]) *trackedOperationRepository {
 	return &trackedOperationRepository{
 		trackedOperation: trackedOperation,
 	}
 }
 
-func (repo *trackedOperationRepository) FetchOrStart(operation Operation[string, mockedResult, *mockedCtx]) *TrackedOperation[string, mockedResult] {
+func (repo *trackedOperationRepository) FetchOrStart(operation Operation[mockedPayload, mockedResult, *mockedCtx]) *TrackedOperation[mockedPayload, mockedResult] {
 	return repo.trackedOperation
 }
 
-func (repo *trackedOperationRepository) NewSession(operation Operation[string, mockedResult, *mockedCtx]) *Session[string, mockedResult, *mockedCtx] {
+func (repo *trackedOperationRepository) NewSession(operation Operation[mockedPayload, mockedResult, *mockedCtx]) *Session[mockedPayload, mockedResult, *mockedCtx] {
 	return NewSession(operation, newMockedCtx())
 }

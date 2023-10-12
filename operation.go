@@ -7,7 +7,7 @@ import (
 type Operation[P any, R any, C SessionCtx[P, R]] interface {
 	Key() string
 	Target() string
-	Payload() P
+	Payload() *P
 	ReferenceTime() time.Time
 	Timeout() time.Duration
 	Expiration() time.Duration
