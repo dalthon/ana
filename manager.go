@@ -1,8 +1,6 @@
 package idempotency_manager
 
-import (
-	"time"
-)
+import "time"
 
 type Manager[P any, R any, C SessionCtx[P, R]] struct {
 	repository IdempotencyRepository[P, R, C]

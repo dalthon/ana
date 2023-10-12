@@ -1,8 +1,6 @@
 package idempotency_manager
 
-import (
-	"time"
-)
+import "time"
 
 type TrackedOperationStatus uint64
 

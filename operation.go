@@ -1,8 +1,6 @@
 package idempotency_manager
 
-import (
-	"time"
-)
+import "time"
 
 type Operation[P any, R any, C SessionCtx[P, R]] interface {
 	Key() string
