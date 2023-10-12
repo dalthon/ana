@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+
+  idempotency-manager:
+    image: ${SERVICE_NAME}
+    build:
+      context: .
+    volumes:
+      - ${DOCKER_WORKDIR}:/app
+    environment:
+      DATABASE_URL: "postgres://idempotency-manager-user:not-safe-at-all@postgres:5432/idempotency-manager-db?pool_min_conns=5&pool_max_conns=5"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ${DOCKER_WORKDIR}/migrations:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB:       "idempotency-manager-db"
+      POSTGRES_USER:     "idempotency-manager-user"
+      POSTGRES_PASSWORD: "not-safe-at-all"

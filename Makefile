@@ -1,9 +1,10 @@
 SH ?= ash
 
-IMAGE_NAME := idempotency-manager
+SERVICE_NAME := idempotency-manager
 
 DOCKER_WORKDIR ?= `pwd`
-DOCKER_RUN := docker run --rm -v $(DOCKER_WORKDIR):/app -it
+DOCKER_COMPOSE := SERVICE_NAME=$(SERVICE_NAME) DOCKER_WORKDIR=$(DOCKER_WORKDIR) docker compose
+DOCKER_RUN := $(DOCKER_COMPOSE) run --rm
 DOCKER_BIN := $(shell which docker)
 
 define docker_run
@@ -19,38 +20,52 @@ help: ## Get help
 .PHONY: help
 
 build :## Builds docker image
-	docker build -t $(IMAGE_NAME) .
+	SERVICE_NAME=$(SERVICE_NAME) DOCKER_WORKDIR=$(DOCKER_WORKDIR) docker compose build
 .PHONY: build
 
 shell: ## Runs shell inside container
-	@$(call docker_run,$(IMAGE_NAME),$@,$(SH))
+	@$(call docker_run,$(SERVICE_NAME),$@,$(SH))
 .PHONY: shell
 
 test: ## Runs tests
-	@$(call docker_run,$(IMAGE_NAME),$@,go test)
+	@$(call docker_run,$(SERVICE_NAME),$@,go test)
 .PHONY: test
 
 test-%: ## Runs specific test
-	@$(call docker_run,$(IMAGE_NAME),$@,go test -run $*)
+	@$(call docker_run,$(SERVICE_NAME),$@,go test -run $*)
 .PHONY: test-%
 
 example-%: ## Runs an example from folder examples by number
 	@$(eval EXAMPLE := $(shell ls examples/$*-* | head -n 1))
-	@$(call docker_run,$(IMAGE_NAME),$@,go run $(EXAMPLE))
+	@$(call docker_run,$(SERVICE_NAME),$@,go run $(EXAMPLE))
 .PHONY: example-%
 
 make-%: ## Runs make tasks
-	@$(call docker_run,$(IMAGE_NAME),$@,make $*)
+	@$(call docker_run,$(SERVICE_NAME),$@,make $*)
 .PHONY: make-%
 
 cover: make-cover ## Runs tests with cover and output its result
 .PHONY: cover
 
 stop-%: ## Stops container
-	docker rm -f $(IMAGE_NAME)-$*
+	docker rm -f $(SERVICE_NAME)-$*
+
+down: clean ## Alias to clean
+
+down-%: ## Stops a given container
+	$(DOCKER_COMPOSE) stop $*
+	$(DOCKER_COMPOSE) rm -f $*
+
+clean: ## Stops all containers and clean docker env
+	$(DOCKER_COMPOSE) down -v --remove-orphans
+	docker system prune -f
+
+wipe: ## Stops all containers and clean docker env AND REMOVE IMAGES
+	$(DOCKER_COMPOSE) down -v --rmi local --remove-orphans
+	docker system prune -f
 
 docs: ## Runs godoc server
-	@$(call docker_run,$(IMAGE_NAME),$@,godoc -http=:6060,-p 6060:6060)
+	@$(call docker_run,$(SERVICE_NAME),$@,godoc -http=:6060,-p 6060:6060)
 .PHONY: docs
 
 make-cover:
