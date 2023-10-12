@@ -49,13 +49,8 @@ func (session *Session[P, R, C]) trackedOperation() *TrackedOperation[P, R] {
 		expiration = session.operation.ReferenceTime().Add(session.operation.Expiration())
 	}
 
-	status := Finished
-	if session.err != nil {
-		status = Failed
-	}
-
 	return NewTrackedOperation(
-		status,
+		Running,
 		session.operation.Key(),
 		session.operation.Target(),
 		session.operation.Payload(),
