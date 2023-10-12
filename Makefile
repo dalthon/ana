@@ -28,7 +28,7 @@ shell: ## Runs shell inside container
 .PHONY: shell
 
 test: ## Runs tests
-	@$(call docker_run,$(SERVICE_NAME),$@,go test)
+	@$(call docker_run,$(SERVICE_NAME),$@,go test ./...)
 .PHONY: test
 
 test-%: ## Runs specific test
@@ -70,7 +70,7 @@ docs: ## Runs godoc server
 
 make-cover:
 	@mkdir -p tmp
-	go test -coverprofile=tmp/cover.out
+	go test -coverprofile=tmp/cover.out ./...
 	go tool cover -html=tmp/cover.out -o tmp/cover.html
 	@rm -rf tmp/cover.out
 .PHONY: make-cover
