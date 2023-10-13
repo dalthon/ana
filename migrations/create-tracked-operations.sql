@@ -5,20 +5,20 @@ CREATE TYPE ana.operation_status AS ENUM(
 );
 
 CREATE TABLE IF NOT EXISTS ana.tracked_operations (
-  reference_time timestamptz                  NOT NULL,
-  started_at     timestamptz                  NOT NULL,
+  reference_time timestamptz          NOT NULL,
+  started_at     timestamptz          NOT NULL,
   finished_at    timestamptz,
   timeout        timestamptz,
   expiration     timestamptz,
-  error_count    integer                      NOT NULL DEFAULT 0,
+  error_count    integer              NOT NULL DEFAULT 0,
   status         ana.operation_status NOT NULL DEFAULT 'running',
-  target         varchar                      NOT NULL,
-  key            varchar                      NOT NULL,
-  payload        bytea                        NOT NULL,
+  target         varchar              NOT NULL,
+  key            varchar              NOT NULL,
+  payload        bytea                NOT NULL,
   result         bytea,
   error_message  varchar,
 
-  PRIMARY KEY(target, key, reference_time)
+  PRIMARY KEY(target, key)
 );
 
 CREATE OR REPLACE FUNCTION ana.fetch_or_start(

@@ -26,7 +26,7 @@ var failTrackedOperationQuery string = `
   SET
     payload       = @payload,
     result        = NULL,
-    finished_at   = NULL,
+    finished_at   = NOW(),
     status        = 'failed',
     timeout       = NOW(),
     error_message = @error_message,

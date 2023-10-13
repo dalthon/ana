@@ -32,7 +32,7 @@ test: ## Runs tests
 .PHONY: test
 
 test-%: ## Runs specific test
-	@$(call docker_run,$(SERVICE_NAME),$@,go test -run $*)
+	@$(call docker_run,$(SERVICE_NAME),$@,go test -run $* ./...)
 .PHONY: test-%
 
 example-%: ## Runs an example from folder examples by number
