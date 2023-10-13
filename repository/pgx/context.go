@@ -2,6 +2,7 @@ package pgx
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	a "github.com/dalthon/ana"
@@ -46,6 +47,7 @@ func NewPgxContext[P any, R any](outerTx pgx.Tx, tx pgx.Tx, context context.Cont
 
 func (ctx *PgxContext[P, R]) Success(operation *a.TrackedOperation[P, R]) {
 	if !operation.Expiration.IsZero() && time.Now().After(operation.Expiration) {
+		operation.Err = errors.New("Operation expired")
 		ctx.Fail(operation)
 		return
 	}

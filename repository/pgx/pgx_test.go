@@ -2,7 +2,9 @@ package pgx
 
 import (
 	"context"
+	"errors"
 	"os"
+	"time"
 
 	a "github.com/dalthon/ana"
 
@@ -39,6 +41,66 @@ func TestPgxRepositoryFetchOrStart(t *testing.T) {
 	assertEqual(t, trackedOperation.StartedAt, anotherTrackedOperation.StartedAt)
 	assertEqual(t, trackedOperation.Timeout, anotherTrackedOperation.Timeout)
 	assertEqual(t, trackedOperation.Expiration, anotherTrackedOperation.Expiration)
+}
+
+func TestPgxContextSuccess(t *testing.T) {
+	pool := newPool()
+	clearDatabase(pool)
+
+	repo := NewPgxRepository[debugPayload, debugResult](pool)
+	operation := newMockedOperation("key", "target", "payload", "result", true)
+
+	trackedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, trackedOperation.Status, a.Ready)
+
+	trackedOperation.Result = &debugResult{"result"}
+	session := repo.NewSession(operation)
+	session.Context.Success(trackedOperation)
+
+	refreshedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, refreshedOperation.Status, a.Finished)
+	assertEqual(t, refreshedOperation.Result.Value, "result")
+	assertErrorNil(t, refreshedOperation.Err)
+}
+
+func TestPgxContextFail(t *testing.T) {
+	pool := newPool()
+	clearDatabase(pool)
+
+	repo := NewPgxRepository[debugPayload, debugResult](pool)
+	operation := newMockedOperation("key", "target", "payload", "result", true)
+
+	trackedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, trackedOperation.Status, a.Ready)
+
+	trackedOperation.Err = errors.New("Something went wrong")
+	session := repo.NewSession(operation)
+	session.Context.Fail(trackedOperation)
+
+	refreshedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, refreshedOperation.Status, a.Failed)
+	assertNil(t, refreshedOperation.Result)
+	assertEqual(t, refreshedOperation.Err.Error(), trackedOperation.Err.Error())
+}
+
+func TestPgxContextFailOnSuccess(t *testing.T) {
+	pool := newPool()
+	clearDatabase(pool)
+
+	repo := NewPgxRepository[debugPayload, debugResult](pool)
+	operation := newMockedOperation("key", "target", "payload", "result", true)
+
+	trackedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, trackedOperation.Status, a.Ready)
+
+	trackedOperation.Expiration = time.Now().Add(-10 * time.Second)
+	session := repo.NewSession(operation)
+	session.Context.Success(trackedOperation)
+
+	refreshedOperation := repo.FetchOrStart(operation)
+	assertEqual(t, refreshedOperation.Status, a.Failed)
+	assertNil(t, refreshedOperation.Result)
+	assertEqual(t, refreshedOperation.Err.Error(), "Operation expired")
 }
 
 func newPool() *pgxpool.Pool {

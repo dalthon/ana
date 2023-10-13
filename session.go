@@ -9,8 +9,8 @@ type SessionCtx[P any, R any] interface {
 
 // TODO: Add some tests at session_test.go
 type Session[P any, R any, C SessionCtx[P, R]] struct {
+	Context   C
 	operation Operation[P, R, C]
-	context   C
 	startedAt time.Time
 	result    *R
 	err       error
@@ -19,8 +19,8 @@ type Session[P any, R any, C SessionCtx[P, R]] struct {
 
 func NewSession[P any, R any, C SessionCtx[P, R]](operation Operation[P, R, C], context C) *Session[P, R, C] {
 	return &Session[P, R, C]{
+		Context:   context,
 		operation: operation,
-		context:   context,
 		closed:    false,
 	}
 }
@@ -28,7 +28,7 @@ func NewSession[P any, R any, C SessionCtx[P, R]](operation Operation[P, R, C], 
 func (session *Session[P, R, C]) call() {
 	defer session.recover()
 	session.startedAt = time.Now()
-	session.result, session.err = session.operation.Call(session.context)
+	session.result, session.err = session.operation.Call(session.Context)
 }
 
 func (session *Session[P, R, C]) recover() {
@@ -69,11 +69,11 @@ func (session *Session[P, R, C]) close() {
 	}
 
 	if session.err == nil {
-		session.context.Success(session.trackedOperation())
+		session.Context.Success(session.trackedOperation())
 		session.closed = true
 		return
 	}
 
-	session.context.Fail(session.trackedOperation())
+	session.Context.Fail(session.trackedOperation())
 	session.closed = true
 }
