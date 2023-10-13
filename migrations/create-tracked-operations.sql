@@ -1,17 +1,17 @@
-CREATE SCHEMA IF NOT EXISTS idempotency;
+CREATE SCHEMA IF NOT EXISTS ana;
 
-CREATE TYPE idempotency.operation_status AS ENUM(
+CREATE TYPE ana.operation_status AS ENUM(
   'ready', 'running', 'finished', 'failed'
 );
 
-CREATE TABLE IF NOT EXISTS idempotency.tracked_operations (
+CREATE TABLE IF NOT EXISTS ana.tracked_operations (
   reference_time timestamptz                  NOT NULL,
   started_at     timestamptz                  NOT NULL,
   finished_at    timestamptz,
   timeout        timestamptz,
   expiration     timestamptz,
   error_count    integer                      NOT NULL DEFAULT 0,
-  status         idempotency.operation_status NOT NULL DEFAULT 'running',
+  status         ana.operation_status NOT NULL DEFAULT 'running',
   target         varchar                      NOT NULL,
   key            varchar                      NOT NULL,
   payload        bytea                        NOT NULL,
@@ -21,21 +21,21 @@ CREATE TABLE IF NOT EXISTS idempotency.tracked_operations (
   PRIMARY KEY(target, key, reference_time)
 );
 
-CREATE OR REPLACE FUNCTION idempotency.fetch_or_start(
+CREATE OR REPLACE FUNCTION ana.fetch_or_start(
   _key            varchar,
   _target         varchar,
   _payload        bytea,
   _reference_time timestamptz,
   _timeout        interval,
   _expiration     interval
-) RETURNS idempotency.tracked_operations
+) RETURNS ana.tracked_operations
 LANGUAGE plpgsql
 AS $$
 DECLARE
-  _operation idempotency.tracked_operations;
+  _operation ana.tracked_operations;
 BEGIN
   SELECT * INTO _operation
-  FROM idempotency.tracked_operations
+  FROM ana.tracked_operations
   WHERE key = _key AND target = _target
   FOR UPDATE;
 
@@ -43,7 +43,7 @@ BEGIN
     RETURN _operation;
   END IF;
 
-  INSERT INTO idempotency.tracked_operations (
+  INSERT INTO ana.tracked_operations (
     status,
     key,
     target,

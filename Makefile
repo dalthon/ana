@@ -1,6 +1,6 @@
 SH ?= ash
 
-SERVICE_NAME := idempotency-manager
+SERVICE_NAME := ana
 
 DOCKER_WORKDIR ?= `pwd`
 DOCKER_COMPOSE := SERVICE_NAME=$(SERVICE_NAME) DOCKER_WORKDIR=$(DOCKER_WORKDIR) docker compose

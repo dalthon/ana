@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	im "github.com/dalthon/idempotency_manager"
+	a "github.com/dalthon/ana"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
@@ -19,7 +19,7 @@ func TestPgxRepositoryFetchOrStart(t *testing.T) {
 	operation := newMockedOperation("key", "target", "payload", "result", true)
 
 	trackedOperation := repo.FetchOrStart(operation)
-	assertEqual(t, trackedOperation.Status, im.Ready)
+	assertEqual(t, trackedOperation.Status, a.Ready)
 	assertEqual(t, trackedOperation.Key, operation.Key())
 	assertEqual(t, trackedOperation.Target, operation.Target())
 	assertEqual(t, trackedOperation.Payload.Value, operation.Payload().Value)
@@ -28,7 +28,7 @@ func TestPgxRepositoryFetchOrStart(t *testing.T) {
 	assertErrorNil(t, trackedOperation.Err)
 
 	anotherTrackedOperation := repo.FetchOrStart(operation)
-	assertEqual(t, anotherTrackedOperation.Status, im.Running)
+	assertEqual(t, anotherTrackedOperation.Status, a.Running)
 	assertEqual(t, anotherTrackedOperation.Key, operation.Key())
 	assertEqual(t, anotherTrackedOperation.Target, operation.Target())
 	assertEqual(t, anotherTrackedOperation.Payload.Value, operation.Payload().Value)
@@ -51,7 +51,7 @@ func newPool() *pgxpool.Pool {
 }
 
 func clearDatabase(pool *pgxpool.Pool) {
-	if _, err := pool.Exec(context.Background(), "TRUNCATE idempotency.tracked_operations;"); err != nil {
+	if _, err := pool.Exec(context.Background(), "TRUNCATE ana.tracked_operations;"); err != nil {
 		panic(err)
 	}
 }

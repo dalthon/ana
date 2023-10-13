@@ -5,7 +5,7 @@ import (
 	"encoding/gob"
 	"errors"
 
-	im "github.com/dalthon/idempotency_manager"
+	a "github.com/dalthon/ana"
 	pgx "github.com/jackc/pgx/v5"
 )
 
@@ -39,8 +39,8 @@ func deserialize[S any](encoded []byte) *S {
 	return &decoded
 }
 
-func rowsToTrackedOperation[P any, R any](rows pgx.Rows) *im.TrackedOperation[P, R] {
-	var operation im.TrackedOperation[P, R]
+func rowsToTrackedOperation[P any, R any](rows pgx.Rows) *a.TrackedOperation[P, R] {
+	var operation a.TrackedOperation[P, R]
 	var status string
 	var errorMessage string
 	var encodedPayload []byte
@@ -63,13 +63,13 @@ func rowsToTrackedOperation[P any, R any](rows pgx.Rows) *im.TrackedOperation[P,
 
 	switch status {
 	case "ready":
-		operation.Status = im.Ready
+		operation.Status = a.Ready
 	case "running":
-		operation.Status = im.Running
+		operation.Status = a.Running
 	case "finished":
-		operation.Status = im.Finished
+		operation.Status = a.Finished
 	case "failed":
-		operation.Status = im.Failed
+		operation.Status = a.Failed
 	}
 
 	if errorMessage != "" {

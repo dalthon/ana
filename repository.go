@@ -1,4 +1,4 @@
-package idempotency_manager
+package ana
 
 type IdempotencyRepository[P any, R any, C SessionCtx[P, R]] interface {
 	FetchOrStart(Operation[P, R, C]) *TrackedOperation[P, R]

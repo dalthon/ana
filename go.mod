@@ -1,4 +1,4 @@
-module github.com/dalthon/idempotency_manager
+module github.com/dalthon/ana
 
 go 1.21
 

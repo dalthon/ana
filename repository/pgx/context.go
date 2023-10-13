@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	im "github.com/dalthon/idempotency_manager"
+	a "github.com/dalthon/ana"
 	pgx "github.com/jackc/pgx/v5"
 )
 
 var finishTrackedOperationQuery string = `
-  UPDATE idempotency.tracked_operations
+  UPDATE ana.tracked_operations
   SET
     payload       = @payload,
     result        = @result,
@@ -21,7 +21,7 @@ var finishTrackedOperationQuery string = `
 `
 
 var failTrackedOperationQuery string = `
-  UPDATE idempotency.tracked_operations
+  UPDATE ana.tracked_operations
   SET
     payload       = @payload,
     result        = NULL,
@@ -44,7 +44,7 @@ func NewPgxContext[P any, R any](outerTx pgx.Tx, tx pgx.Tx, context context.Cont
 	return &PgxContext[P, R]{outerTx: outerTx, Tx: tx, Context: context}
 }
 
-func (ctx *PgxContext[P, R]) Success(operation *im.TrackedOperation[P, R]) {
+func (ctx *PgxContext[P, R]) Success(operation *a.TrackedOperation[P, R]) {
 	if !operation.Expiration.IsZero() && time.Now().After(operation.Expiration) {
 		ctx.Fail(operation)
 		return
@@ -75,7 +75,7 @@ func (ctx *PgxContext[P, R]) Success(operation *im.TrackedOperation[P, R]) {
 	}
 }
 
-func (ctx *PgxContext[P, R]) Fail(operation *im.TrackedOperation[P, R]) {
+func (ctx *PgxContext[P, R]) Fail(operation *a.TrackedOperation[P, R]) {
 	if commitErr := ctx.Tx.Rollback(ctx.Context); commitErr != nil {
 		panic(commitErr)
 	}

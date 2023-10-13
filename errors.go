@@ -1,4 +1,4 @@
-package idempotency_manager
+package ana
 
 import "fmt"
 

@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	im "github.com/dalthon/idempotency_manager"
-	r "github.com/dalthon/idempotency_manager/repository/pgx"
+	a "github.com/dalthon/ana"
+	r "github.com/dalthon/ana/repository/pgx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -17,7 +17,7 @@ func main() {
 	pool := newPool()
 	repo := r.NewPgxRepository[debugPayload, debugResult](pool)
 
-	manager := im.New(repo)
+	manager := a.New(repo)
 	operation := newOperation()
 	result, err := manager.Call(operation)
 

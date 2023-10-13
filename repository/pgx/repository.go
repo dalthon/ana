@@ -3,7 +3,7 @@ package pgx
 import (
 	"context"
 
-	im "github.com/dalthon/idempotency_manager"
+	a "github.com/dalthon/ana"
 	pgx "github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -20,7 +20,7 @@ var fetchOrStartQuery string = `
     expiration,
     result,
     error_message
-  FROM idempotency.fetch_or_start(
+  FROM ana.fetch_or_start(
     @key,
     @target,
     @payload,
@@ -32,7 +32,7 @@ var fetchOrStartQuery string = `
 
 var lockTrackOperationQuery string = `
   SELECT *
-  FROM idempotency.tracked_operations
+  FROM ana.tracked_operations
   WHERE
     key            = @key    AND
     target         = @target AND
@@ -48,7 +48,7 @@ func NewPgxRepository[P any, R any](pool *pgxpool.Pool) *PgxRepository[P, R] {
 	return &PgxRepository[P, R]{pool: pool}
 }
 
-func (repo *PgxRepository[P, R]) FetchOrStart(operation im.Operation[P, R, *PgxContext[P, R]]) *im.TrackedOperation[P, R] {
+func (repo *PgxRepository[P, R]) FetchOrStart(operation a.Operation[P, R, *PgxContext[P, R]]) *a.TrackedOperation[P, R] {
 	rows, err := repo.pool.Query(
 		context.Background(),
 		fetchOrStartQuery,
@@ -69,7 +69,7 @@ func (repo *PgxRepository[P, R]) FetchOrStart(operation im.Operation[P, R, *PgxC
 	return rowsToTrackedOperation[P, R](rows)
 }
 
-func (repo *PgxRepository[P, R]) NewSession(operation im.Operation[P, R, *PgxContext[P, R]]) *im.Session[P, R, *PgxContext[P, R]] {
+func (repo *PgxRepository[P, R]) NewSession(operation a.Operation[P, R, *PgxContext[P, R]]) *a.Session[P, R, *PgxContext[P, R]] {
 	context := context.Background()
 	outerTx, _ := repo.pool.Begin(context)
 	tx, _ := outerTx.Begin(context)
@@ -80,5 +80,5 @@ func (repo *PgxRepository[P, R]) NewSession(operation im.Operation[P, R, *PgxCon
 		"reference_time": operation.ReferenceTime(),
 	})
 
-	return im.NewSession(operation, NewPgxContext[P, R](outerTx, tx, context))
+	return a.NewSession(operation, NewPgxContext[P, R](outerTx, tx, context))
 }
