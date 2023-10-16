@@ -2,6 +2,8 @@ SH ?= ash
 
 SERVICE_NAME := ana
 
+PORT := 3000
+
 DOCKER_WORKDIR ?= `pwd`
 DOCKER_COMPOSE := SERVICE_NAME=$(SERVICE_NAME) DOCKER_WORKDIR=$(DOCKER_WORKDIR) docker compose
 DOCKER_RUN := $(DOCKER_COMPOSE) run --rm
@@ -37,7 +39,7 @@ test-%: ## Runs specific test
 
 example-%: ## Runs an example from folder examples by number
 	@$(eval EXAMPLE := $(shell ls examples/$*-* | head -n 1))
-	@$(call docker_run,$(SERVICE_NAME),$@,go run $(EXAMPLE))
+	@$(call docker_run,$(SERVICE_NAME),$@,go run $(EXAMPLE),-p $(PORT):$(PORT))
 .PHONY: example-%
 
 make-%: ## Runs make tasks
