@@ -19,7 +19,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ${DOCKER_WORKDIR}/migrations:/docker-entrypoint-initdb.d
+      - ${DOCKER_WORKDIR}/repository/pgx/migrations:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB:       "ana-db"
       POSTGRES_USER:     "ana-user"
