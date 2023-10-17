@@ -32,15 +32,19 @@ func Value[V any](value V) func(*f.Ctx) V {
 }
 
 type Middleware[C a.SessionCtx[HttpPayload, HttpResponse]] struct {
-	config *Config
 	ana    *a.Manager[HttpPayload, HttpResponse, C]
+	config *Config
 }
 
 func New[C a.SessionCtx[HttpPayload, HttpResponse]](
 	ana *a.Manager[HttpPayload, HttpResponse, C],
 	config *Config,
 ) *Middleware[C] {
-	return &Middleware[C]{config, ana}
+	if config == nil {
+		config = &Config{}
+	}
+
+	return &Middleware[C]{ana, config}
 }
 
 func (middleware *Middleware[C]) Call(idempotentHandler func(*f.Ctx, C) (*HttpResponse, error), config *Config) func(*f.Ctx) error {
