@@ -146,14 +146,15 @@ the same value. This seems silly, but is quite useful to have fixed configs for
 
 * Chores:
   * Add a few more tests on postgres repository showing that transactions are
-  really rolling back everything done by user in case of failure
-  * Add fiber's middleware tests
+  really rolling back everything done by user in case of failure.
+  * Add fiber's middleware tests.
 * Features:
-  * Add `FinishedAt` and `ErrorCount` on `TrackedOperation`
-  * Add `net/http` middleware
-  * Add Redis persistence
+  * Add `FinishedAt` and `ErrorCount` on `TrackedOperation`.
+  * Add `net/http` middleware.
+  * Add Redis persistence.
   * On Postgres repository, add config to store Response in Redis instead
-  of Postgres
+  of Postgres.
+  * Consider timeout to add statement timeout on session.
 
 ## Contributing
 
