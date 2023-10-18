@@ -178,6 +178,7 @@ This project is released under the [MIT License][license]
 [duration]:      https://pkg.go.dev/time#ParseDuration
 [example]:       examples/02-fiber.go
 [fiber]:         https://gofiber.io/
+[license]:       https://opensource.org/licenses/MIT
 [makefile]:      Makefile
 [rfc-time]:      https://www.rfc-editor.org/rfc/rfc3339.html
 [pgx]:           https://github.com/jackc/pgx
